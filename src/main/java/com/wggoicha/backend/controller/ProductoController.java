@@ -33,6 +33,11 @@ public class ProductoController {
 
     @PostMapping
     public Producto crear(@RequestBody Producto producto) {
+
+        if (producto.getDestacado() == null) {
+            producto.setDestacado(false);
+        }
+
         return productoRepository.save(producto);
     }
 
