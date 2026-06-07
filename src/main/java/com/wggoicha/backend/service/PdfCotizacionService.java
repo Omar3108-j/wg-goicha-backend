@@ -157,7 +157,7 @@ public class PdfCotizacionService {
             Paragraph contacto = new Paragraph(
                     "Av. Guillermo Dansey N° 481 Int. 159 - Lima\n" +
                             "431-4470  |  994 079 602  |  994 079 698\n" +
-                            "ventas@corporaciongoicha.com",
+                            "goichainversiones@hotmail.com",
                     new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(71, 85, 105))
             );
             contacto.setLeading(12f);
