@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import org.springframework.core.io.ClassPathResource;
+
 
 @Service
 public class PdfCotizacionService {
@@ -43,7 +45,7 @@ public class PdfCotizacionService {
                         PdfContentByte canvas = writer.getDirectContent();
 
                         // LOGO TRANSLÚCIDO DE FONDO
-                        Image watermark = Image.getInstance("src/main/resources/static/logo-wg.png");
+                        Image watermark = cargarLogo();
                         watermark.scaleToFit(300, 220);
 
                         float x = (PageSize.A4.getWidth() - watermark.getScaledWidth()) / 2;
@@ -113,7 +115,8 @@ public class PdfCotizacionService {
             logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
             try {
-                Image logo = Image.getInstance("src/main/resources/static/logo-wg.png");
+                Image logo = cargarLogo();
+
                 logo.scaleToFit(115, 70);
                 logo.setAlignment(Element.ALIGN_LEFT);
                 logoCell.addElement(logo);
@@ -674,4 +677,13 @@ public class PdfCotizacionService {
 
         return cell;
     }
+    private Image cargarLogo() throws Exception {
+        ClassPathResource resource =
+                new ClassPathResource("static/logo-wg.png");
+
+        return Image.getInstance(
+                resource.getInputStream().readAllBytes()
+        );
+    }
+
 }
