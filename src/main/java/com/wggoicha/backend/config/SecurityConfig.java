@@ -44,7 +44,9 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://wg-goicha-frontend.vercel.app"
+                "https://wg-goicha-frontend.vercel.app",
+                "https://wgcorporaciongoicha.com",
+                "https://www.wgcorporaciongoicha.com"
         ));
 
         configuration.setAllowedMethods(List.of(

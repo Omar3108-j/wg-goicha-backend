@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import org.springframework.core.io.ClassPathResource;
 
 @Service
 public class PdfPedidoService {
@@ -30,7 +31,7 @@ public class PdfPedidoService {
             left.setBorder(Rectangle.NO_BORDER);
 
             try {
-                Image logo = Image.getInstance("src/main/resources/static/logo-wg.png");
+                Image logo = cargarLogo();
                 logo.scaleToFit(120, 70);
                 left.addElement(logo);
             } catch (Exception e) {
@@ -210,5 +211,13 @@ public class PdfPedidoService {
 
         line.addCell(cell);
         document.add(line);
+    }
+    private Image cargarLogo() throws Exception {
+        ClassPathResource resource =
+                new ClassPathResource("static/logo-wg.png");
+
+        return Image.getInstance(
+                resource.getInputStream().readAllBytes()
+        );
     }
 }
