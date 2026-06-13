@@ -10,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ProductoController {
 
     private final ProductoRepository productoRepository;
@@ -55,7 +54,9 @@ public class ProductoController {
         producto.setCategoria(productoActualizado.getCategoria());
         producto.setMarca(productoActualizado.getMarca());
         producto.setPrecio(productoActualizado.getPrecio());
-        producto.setDestacado(productoActualizado.getDestacado());
+        if (productoActualizado.getDestacado() != null) {
+            producto.setDestacado(productoActualizado.getDestacado());
+        }
 
         return productoRepository.save(producto);
     }
