@@ -16,7 +16,12 @@ public class ProductoController {
 
     @GetMapping("/destacados")
     public List<Producto> listarDestacados() {
-        return productoRepository.findByDestacadoTrue();
+        return productoRepository.findByDestacadoTrueAndActivoTrue();
+    }
+
+    @GetMapping("/activos")
+    public List<Producto> listarActivos() {
+        return productoRepository.findByActivoTrue();
     }
 
     @GetMapping
@@ -37,6 +42,10 @@ public class ProductoController {
             producto.setDestacado(false);
         }
 
+        if (producto.getActivo() == null) {
+            producto.setActivo(true);
+        }
+
         return productoRepository.save(producto);
     }
 
@@ -45,8 +54,6 @@ public class ProductoController {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-
-
         producto.setNombre(productoActualizado.getNombre());
         producto.setDescripcion(productoActualizado.getDescripcion());
         producto.setImagen(productoActualizado.getImagen());
@@ -54,8 +61,13 @@ public class ProductoController {
         producto.setCategoria(productoActualizado.getCategoria());
         producto.setMarca(productoActualizado.getMarca());
         producto.setPrecio(productoActualizado.getPrecio());
+
         if (productoActualizado.getDestacado() != null) {
             producto.setDestacado(productoActualizado.getDestacado());
+        }
+
+        if (productoActualizado.getActivo() != null) {
+            producto.setActivo(productoActualizado.getActivo());
         }
 
         return productoRepository.save(producto);

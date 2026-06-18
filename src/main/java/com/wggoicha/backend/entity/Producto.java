@@ -35,6 +35,9 @@ public class Producto {
     @Column(nullable = false)
     private Boolean destacado = false;
 
+    @Column(nullable = false)
+    private Boolean activo = true;
+
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
