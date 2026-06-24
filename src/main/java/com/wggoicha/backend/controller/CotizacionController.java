@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import com.wggoicha.backend.service.PdfCotizacionService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/cotizaciones")
@@ -103,6 +106,24 @@ public class CotizacionController {
         return cotizacionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cotización no encontrada"));
     }
+    /* Persist quotation status V1 */
+    @PatchMapping("/{id}/estado")
+    public Cotizacion actualizarEstado(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String estado = body.get("estado");
+        if (estado == null || estado.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El estado es obligatorio");
+        }
+
+        Cotizacion cotizacion = cotizacionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Cotización no encontrada"
+                ));
+
+        cotizacion.setEstado(estado.trim());
+        return cotizacionRepository.save(cotizacion);
+    }
+
     @PutMapping("/{id}")
     public Cotizacion actualizar(@PathVariable Long id, @RequestBody Cotizacion cotizacionActualizada) {
         Cotizacion cotizacion = cotizacionRepository.findById(id)

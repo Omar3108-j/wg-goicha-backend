@@ -356,7 +356,7 @@ public class PdfCotizacionService {
                         ? Color.WHITE
                         : new Color(248, 250, 252);
 
-                tabla.addCell(crearBodyPremium(item.getCantidad().toString(), rowColor, Element.ALIGN_CENTER));
+                tabla.addCell(crearBodyPremium(formatearCantidad(item.getCantidad()), rowColor, Element.ALIGN_CENTER));
                 tabla.addCell(crearBodyPremium(item.getDescripcion(), rowColor, Element.ALIGN_LEFT));
                 tabla.addCell(crearBodyPremium("S/ " + item.getPrecioUnitario(), rowColor, Element.ALIGN_RIGHT));
                 tabla.addCell(crearBodyPremium("S/ " + item.getTotal(), rowColor, Element.ALIGN_RIGHT));
@@ -507,6 +507,10 @@ public class PdfCotizacionService {
         }
 
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    static String formatearCantidad(BigDecimal cantidad) {
+        return cantidad.stripTrailingZeros().toPlainString();
     }
 
     private PdfPCell crearCelda(String text, Font font) {
