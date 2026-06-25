@@ -4,6 +4,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -20,9 +21,14 @@ import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.ColumnText;
 
 import java.awt.Color;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import javax.imageio.ImageIO;
 import org.springframework.core.io.ClassPathResource;
 
 
@@ -157,7 +163,7 @@ public class PdfCotizacionService {
             Paragraph contacto = new Paragraph(
                     "Av. Guillermo Dansey N° 481 Int. 159 - Lima\n" +
                             "431-4470  |  994 079 602  |  994 079 698\n" +
-                            "goichainversiones@hotmail.com",
+                            "wgcorporaciongoicha@gmail.com",
                     new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(71, 85, 105))
             );
             contacto.setLeading(12f);
@@ -474,11 +480,27 @@ public class PdfCotizacionService {
             Paragraph notaInfo = new Paragraph(
                     "• Atención personalizada para cada proyecto.\n" +
                             "• Productos de calidad garantizada.\n" +
-                            "• Trabajamos con marcas reconocidas y productos certificados.\n" +
-                            "• Visita nuestra web y descubre más productos:\n" +
-                            "  www.wgcorporaciongoicha.com",
+                            "• Trabajamos con marcas reconocidas y productos certificados.\n",
                     new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(71, 85, 105))
             );
+
+            notaInfo.add(new Chunk(crearIconoCatalogo(), 0, -1, true));
+            notaInfo.add(new Chunk(
+                    " Cat\u00E1logo online:\n",
+                    new Font(Font.HELVETICA, 8, Font.BOLD, new Color(71, 85, 105))
+            ));
+
+            Chunk catalogoLink = new Chunk(
+                    "www.wgcorporaciongoicha.com",
+                    new Font(
+                            Font.HELVETICA,
+                            8,
+                            Font.BOLD | Font.UNDERLINE,
+                            new Color(21, 101, 192)
+                    )
+            );
+            catalogoLink.setAnchor("https://www.wgcorporaciongoicha.com");
+            notaInfo.add(catalogoLink);
 
             notaInfo.setLeading(12f);
 
@@ -511,6 +533,34 @@ public class PdfCotizacionService {
 
     static String formatearCantidad(BigDecimal cantidad) {
         return cantidad.stripTrailingZeros().toPlainString();
+    }
+
+    private Image crearIconoCatalogo() throws Exception {
+        int size = 64;
+        BufferedImage bufferedImage = new BufferedImage(
+                size,
+                size,
+                BufferedImage.TYPE_INT_ARGB
+        );
+        Graphics2D graphics = bufferedImage.createGraphics();
+
+        graphics.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        graphics.setColor(new Color(71, 85, 105));
+        graphics.setStroke(new BasicStroke(5f));
+        graphics.drawOval(6, 6, 52, 52);
+        graphics.drawOval(20, 6, 24, 52);
+        graphics.drawLine(7, 32, 57, 32);
+        graphics.dispose();
+
+        ByteArrayOutputStream iconBytes = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", iconBytes);
+
+        Image icon = Image.getInstance(iconBytes.toByteArray());
+        icon.scaleAbsolute(8, 8);
+        return icon;
     }
 
     private PdfPCell crearCelda(String text, Font font) {
