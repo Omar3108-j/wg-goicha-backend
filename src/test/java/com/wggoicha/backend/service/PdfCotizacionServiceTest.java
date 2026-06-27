@@ -27,7 +27,7 @@ class PdfCotizacionServiceTest {
     }
 
     @Test
-    void agregaEnlaceClicableAlCatalogoOnline() throws IOException {
+    void agregaEnlaceClicableAlSitioWeb() throws IOException {
         Cotizacion cotizacion = new Cotizacion();
         cotizacion.setCodigo("COT-00001");
         cotizacion.setCliente("CLIENTE DE PRUEBA");

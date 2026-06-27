@@ -486,7 +486,7 @@ public class PdfCotizacionService {
 
             notaInfo.add(new Chunk(crearIconoCatalogo(), 0, -1, true));
             notaInfo.add(new Chunk(
-                    " Cat\u00E1logo online:\n",
+                    " Visita nuestra web\n",
                     new Font(Font.HELVETICA, 8, Font.BOLD, new Color(71, 85, 105))
             ));
 
