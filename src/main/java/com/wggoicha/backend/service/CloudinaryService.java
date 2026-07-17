@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class CloudinaryService {
     @Value("${cloudinary.folder}")
     private String folder;
 
-    @Value("${app.upload.dir:uploads/productos}")
+    @Value("${app.upload.dir:${java.io.tmpdir}/wg-goicha/productos}")
     private String uploadDir;
 
     public String uploadImage(MultipartFile file) {
@@ -69,7 +70,7 @@ public class CloudinaryService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre de archivo inválido");
             }
 
-            file.transferTo(target);
+            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
             return "/uploads/productos/" + filename;
         } catch (IOException | RuntimeException localError) {
             System.err.println("ERROR LOCAL UPLOAD: " + localError.getClass().getSimpleName() + " - " + localError.getMessage());

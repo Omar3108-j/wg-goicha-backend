@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 @Configuration
 public class StaticResourceConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.dir:uploads/productos}")
+    @Value("${app.upload.dir:${java.io.tmpdir}/wg-goicha/productos}")
     private String uploadDir;
 
     /* Upload fallback local storage V1 */
