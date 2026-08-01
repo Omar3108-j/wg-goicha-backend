@@ -77,6 +77,12 @@ public class CotizacionController {
         cotizacion.setIgv(igv);
         cotizacion.setTotal(total);
         cotizacion.setEstado("GENERADA");
+        cotizacion.setMoneda(normalizarMoneda(cotizacion.getMoneda()));
+        cotizacion.setMostrarDetalleIgvPdf(
+                cotizacion.getMostrarDetalleIgvPdf() != null
+                        ? cotizacion.getMostrarDetalleIgvPdf()
+                        : true
+        );
 
         Cotizacion guardada = cotizacionRepository.save(cotizacion);
         guardada.setCodigo(String.format("COT-%05d", guardada.getId()));
@@ -140,6 +146,16 @@ public class CotizacionController {
         cotizacion.setCorreo(cotizacionActualizada.getCorreo());
         cotizacion.setDireccion(cotizacionActualizada.getDireccion());
         cotizacion.setObservaciones(cotizacionActualizada.getObservaciones());
+        /* Quotation PDF display options V1 */
+        cotizacion.setMoneda(normalizarMoneda(
+                cotizacionActualizada.getMoneda(),
+                cotizacion.getMoneda()
+        ));
+        cotizacion.setMostrarDetalleIgvPdf(
+                cotizacionActualizada.getMostrarDetalleIgvPdf() != null
+                        ? cotizacionActualizada.getMostrarDetalleIgvPdf()
+                        : cotizacion.getMostrarDetalleIgvPdf()
+        );
 
         cotizacion.getDetalles().clear();
 
@@ -182,5 +198,17 @@ public class CotizacionController {
         cotizacion.setTotal(total);
 
         return cotizacionRepository.save(cotizacion);
+    }
+
+    private String normalizarMoneda(String moneda) {
+        return "USD".equalsIgnoreCase(moneda != null ? moneda.trim() : "")
+                ? "USD"
+                : "PEN";
+    }
+
+    private String normalizarMoneda(String moneda, String monedaActual) {
+        return moneda == null
+                ? normalizarMoneda(monedaActual)
+                : normalizarMoneda(moneda);
     }
 }

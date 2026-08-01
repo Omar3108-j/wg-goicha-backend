@@ -108,6 +108,9 @@ public class PdfCotizacionService {
             Font subtitleFont = new Font(Font.HELVETICA, 11, Font.BOLD, new Color(239, 68, 68));
             Font textFont = new Font(Font.HELVETICA, 11, Font.NORMAL, Color.DARK_GRAY);
             Font boldFont = new Font(Font.HELVETICA, 11, Font.BOLD, new Color(15, 23, 42));
+            /* Quotation PDF display options V1 */
+            String simboloMoneda = obtenerSimboloMoneda(cotizacion);
+            boolean mostrarDetalleIgvPdf = mostrarDetalleIgvPdf(cotizacion);
 
             // HEADER PREMIUM W&G - VERSIÓN LIMPIA
             PdfPTable header = new PdfPTable(3);
@@ -364,8 +367,8 @@ public class PdfCotizacionService {
 
                 tabla.addCell(crearBodyPremium(formatearCantidad(item.getCantidad()), rowColor, Element.ALIGN_CENTER));
                 tabla.addCell(crearBodyPremium(item.getDescripcion(), rowColor, Element.ALIGN_LEFT));
-                tabla.addCell(crearBodyPremium("S/ " + item.getPrecioUnitario(), rowColor, Element.ALIGN_RIGHT));
-                tabla.addCell(crearBodyPremium("S/ " + item.getTotal(), rowColor, Element.ALIGN_RIGHT));
+                tabla.addCell(crearBodyPremium(simboloMoneda + " " + item.getPrecioUnitario(), rowColor, Element.ALIGN_RIGHT));
+                tabla.addCell(crearBodyPremium(simboloMoneda + " " + item.getTotal(), rowColor, Element.ALIGN_RIGHT));
 
                 fila++;
             }
@@ -380,27 +383,29 @@ public class PdfCotizacionService {
             resumenTotales.setHorizontalAlignment(Element.ALIGN_RIGHT);
             resumenTotales.setSpacingBefore(6);
 
+            if (mostrarDetalleIgvPdf) {
 // SUBTOTAL / IGV
-            PdfPTable subtotales = new PdfPTable(2);
-            subtotales.setWidthPercentage(100);
-            subtotales.setWidths(new int[]{50, 50});
+                PdfPTable subtotales = new PdfPTable(2);
+                subtotales.setWidthPercentage(100);
+                subtotales.setWidths(new int[]{50, 50});
 
-            subtotales.addCell(crearResumenLabel("SUBTOTAL"));
-            subtotales.addCell(crearResumenValue("S/ " + cotizacion.getSubtotal()));
+                subtotales.addCell(crearResumenLabel("SUBTOTAL"));
+                subtotales.addCell(crearResumenValue(simboloMoneda + " " + cotizacion.getSubtotal()));
 
-            subtotales.addCell(crearResumenLabel("IGV 18%"));
-            subtotales.addCell(crearResumenValue("S/ " + cotizacion.getIgv()));
+                subtotales.addCell(crearResumenLabel("IGV 18%"));
+                subtotales.addCell(crearResumenValue(simboloMoneda + " " + cotizacion.getIgv()));
 
-            PdfPCell subtotalesCell = new PdfPCell(subtotales);
-            subtotalesCell.setBorder(Rectangle.NO_BORDER);
-            subtotalesCell.setPadding(0);
-            resumenTotales.addCell(subtotalesCell);
+                PdfPCell subtotalesCell = new PdfPCell(subtotales);
+                subtotalesCell.setBorder(Rectangle.NO_BORDER);
+                subtotalesCell.setPadding(0);
+                resumenTotales.addCell(subtotalesCell);
 
 // ESPACIO
-            PdfPCell spaceCell = new PdfPCell(new Phrase(" "));
-            spaceCell.setBorder(Rectangle.NO_BORDER);
-            spaceCell.setFixedHeight(8);
-            resumenTotales.addCell(spaceCell);
+                PdfPCell spaceCell = new PdfPCell(new Phrase(" "));
+                spaceCell.setBorder(Rectangle.NO_BORDER);
+                spaceCell.setFixedHeight(8);
+                resumenTotales.addCell(spaceCell);
+            }
 
 // TOTAL DESTACADO
             PdfPCell totalBox = new PdfPCell();
@@ -415,7 +420,7 @@ public class PdfCotizacionService {
             totalLabel.setAlignment(Element.ALIGN_CENTER);
 
             Paragraph totalValue = new Paragraph(
-                    "S/ " + cotizacion.getTotal(),
+                    simboloMoneda + " " + cotizacion.getTotal(),
                     new Font(Font.HELVETICA, 18, Font.BOLD, Color.WHITE)
             );
             totalValue.setAlignment(Element.ALIGN_CENTER);
@@ -533,6 +538,16 @@ public class PdfCotizacionService {
 
     static String formatearCantidad(BigDecimal cantidad) {
         return cantidad.stripTrailingZeros().toPlainString();
+    }
+
+    static String obtenerSimboloMoneda(Cotizacion cotizacion) {
+        return cotizacion != null && "USD".equalsIgnoreCase(cotizacion.getMoneda())
+                ? "US$"
+                : "S/";
+    }
+
+    static boolean mostrarDetalleIgvPdf(Cotizacion cotizacion) {
+        return cotizacion == null || !Boolean.FALSE.equals(cotizacion.getMostrarDetalleIgvPdf());
     }
 
     private Image crearIconoCatalogo() throws Exception {
