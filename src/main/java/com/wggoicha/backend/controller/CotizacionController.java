@@ -2,9 +2,7 @@ package com.wggoicha.backend.controller;
 
 import com.wggoicha.backend.entity.Cotizacion;
 import com.wggoicha.backend.entity.CotizacionDetalle;
-import com.wggoicha.backend.entity.ProductoInterno;
 import com.wggoicha.backend.repository.CotizacionRepository;
-import com.wggoicha.backend.repository.ProductoInternoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
@@ -25,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class CotizacionController {
 
     private final CotizacionRepository cotizacionRepository;
-    private final ProductoInternoRepository productoInternoRepository;
     private final PdfCotizacionService pdfCotizacionService;
 
     @GetMapping
@@ -54,18 +51,7 @@ public class CotizacionController {
                 detalle.setTotal(totalLinea);
                 subtotal = subtotal.add(totalLinea);
 
-                if (detalle.getDescripcion() != null && !detalle.getDescripcion().trim().isEmpty()) {
-                    ProductoInterno productoInterno = productoInternoRepository
-                            .findByNombreIgnoreCase(detalle.getDescripcion().trim())
-                            .orElseGet(() -> productoInternoRepository.save(
-                                    ProductoInterno.builder()
-                                            .nombre(detalle.getDescripcion().trim())
-                                            .precio(precio)
-                                            .build()
-                            ));
-
-                    detalle.setProductoInterno(productoInterno);
-                }
+                /* Catalog quotation items V1: la cotización conserva descripción/precio sin crear productos internos. */
             }
         }
 
@@ -173,18 +159,7 @@ public class CotizacionController {
 
                 total = total.add(totalLinea);
 
-                if (detalle.getDescripcion() != null && !detalle.getDescripcion().trim().isEmpty()) {
-                    ProductoInterno productoInterno = productoInternoRepository
-                            .findByNombreIgnoreCase(detalle.getDescripcion().trim())
-                            .orElseGet(() -> productoInternoRepository.save(
-                                    ProductoInterno.builder()
-                                            .nombre(detalle.getDescripcion().trim())
-                                            .precio(precio)
-                                            .build()
-                            ));
-
-                    detalle.setProductoInterno(productoInterno);
-                }
+                /* Catalog quotation items V1: la cotización conserva descripción/precio sin crear productos internos. */
 
                 cotizacion.getDetalles().add(detalle);
             }
@@ -211,4 +186,5 @@ public class CotizacionController {
                 ? normalizarMoneda(monedaActual)
                 : normalizarMoneda(moneda);
     }
+
 }

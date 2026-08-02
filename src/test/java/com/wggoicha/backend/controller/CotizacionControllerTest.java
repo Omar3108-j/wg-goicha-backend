@@ -24,7 +24,7 @@ class CotizacionControllerTest {
         when(repository.findById(15L)).thenReturn(Optional.of(cotizacion));
         when(repository.save(cotizacion)).thenReturn(cotizacion);
 
-        CotizacionController controller = new CotizacionController(repository, null, null);
+        CotizacionController controller = new CotizacionController(repository, null);
 
         Cotizacion actualizada = controller.actualizarEstado(
                 15L,
