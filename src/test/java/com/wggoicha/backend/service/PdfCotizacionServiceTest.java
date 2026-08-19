@@ -59,6 +59,17 @@ class PdfCotizacionServiceTest {
     }
 
     @Test
+    void agregaRucDeEmpresaEnEncabezado() throws IOException {
+        Cotizacion cotizacion = crearCotizacionPrueba();
+
+        PdfReader reader = new PdfReader(new PdfCotizacionService().generarPdf(cotizacion));
+        String texto = new PdfTextExtractor(reader).getTextFromPage(1);
+        reader.close();
+
+        assertTrue(texto.contains("RUC: 20603234848"));
+    }
+
+    @Test
     void permiteOcultarDetalleIgvEnPdf() throws IOException {
         Cotizacion cotizacion = crearCotizacionPrueba();
         cotizacion.setMostrarDetalleIgvPdf(false);

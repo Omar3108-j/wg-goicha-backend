@@ -165,6 +165,7 @@ public class PdfCotizacionService {
 
             Paragraph contacto = new Paragraph(
                     "Av. Guillermo Dansey N° 481 Int. 159 - Lima\n" +
+                            "RUC: 20603234848\n" +
                             "431-4470  |  994 079 602  |  994 079 698\n" +
                             "wgcorporaciongoicha@gmail.com",
                     new Font(Font.HELVETICA, 8, Font.NORMAL, new Color(71, 85, 105))
